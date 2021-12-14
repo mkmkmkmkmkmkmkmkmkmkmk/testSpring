@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--1.简单依赖注入DishCartDao与DishCartServiceImpl,但是service层中需要写-->
+    <!--//ApplicationContext app=new ClassPathXmlApplicationContext("applicationContext.xml");-->
+    <!--//DishCartDao dishCartDao=(DishCartDao) app.getBean("dishCartDao");-->
+    <!--<bean id="dishCartDao" class="dao.impl.DishCartDaoImpl"></bean>
+    <bean id="dishCartService" class="service.impl.DishCartServiceImpl"></bean>-->
+
+    <!--2.1.配置DishCartDao与DishCartServiceImpl依赖注入，service层中不需要写1.中//的代码-->
+    <!--<bean id="dishCartDao" class="dao.impl.DishCartDaoImpl"/>
+        <bean id="dishCartService" class="service.impl.DishCartServiceImpl" >
+            &lt;!&ndash;DishCartServiceImpl中【setDishCartDao()】 的 private DishCartDao dishCartDao;对应属性名name，ref表示引用dishcartDao对象与1.中容器id对应&ndash;&gt;
+             <property name="dishCartDao" ref="dishCartDao"/>
+        </bean>-->
+
+    <!--2.2.配置DishCartDao与DishCartServiceImpl依赖注入，使用p:命名空间配置-->
+    <bean id="dishCartService" class="service.impl.DishCartServiceImpl" p:dishCartDao-ref="dishCartDao"/>
+
+
+
+    <!--3.1.DishCartServiceImpl有参数构造器配置：构造方法注入为创建dishCartDao对象并赋值-->
+    <!--<bean id="dishCartService" class="service.impl.DishCartServiceImpl">
+         &lt;!&ndash;注入对象名字&ndash;&gt;
+        &lt;!&ndash;DishCartServiceImpl中【setDishCartDao()】 的 public DishCartServiceImpl(DishCartDao dishCartDao);与属性名name对应&ndash;&gt;
+        &lt;!&ndash;ref表示引用dishcartDao对象与1.中容器id对应&ndash;&gt;
+        <constructor-arg name="dishCartDao" ref="dishCartDao"></constructor-arg>
+    </bean>-->
+
+
+    <!--3.2无参构造器配置-->
+    <!--<bean id="dishCartService" class="service.impl.DishCartServiceImpl"/>-->
+
+    <!--4.1普通数据类型注入-->
+   <!-- <bean id="dish" class="model.Dish">
+        <property name="did" value="1"/>
+        <property name="name" value=""/>
+        <property name="photoUrl" value="1"/>
+        <property name="price" value="1"/>
+        <property name="sale" value="1"/>
+        <property name="info" value="1"/>
+    </bean>-->
+
+    <!--4.2集合注入-->
+    <bean id="dishCartDao" class="dao.impl.DishCartDaoImpl">
+        <property name="stringList">
+            <list>
+                <!--4.2.1.List<String>-->
+                <value>bbb</value>
+                <value>bbb</value>
+                <value>ccc</value>
+                <!--List<引用类型>-->
+            </list>
+        </property>
+
+        <property name="customerMap">
+            <map>
+                <!--4.2.2Map<String, DishCart>-->
+                <!-- key为字符串，值为对象引用，对象引用必须加bean，被引用对象必须存在容器中才能被引用-->
+                <entry key="dishCart1" value-ref="dishCart1"/>
+                <entry key="dishCart2" value-ref="dishCart2"/>
+            </map>
+        </property>
+    </bean>
+    <!--下面两个与4.2.2对应-->
+    <bean id="dishCart1" class="model.DishCart">
+        <property name="id" value="6"/>
+        <property name="uid" value="28"/>
+        <property name="did" value="4"/>
+        <property name="number" value="2"/>
+    </bean>
+    <bean id="dishCart2" class="model.DishCart">
+        <property name="id" value="7"/>
+        <property name="uid" value="29"/>
+        <property name="did" value="5"/>
+        <property name="number" value="1"/>
+    </bean>
+<!--5.引入其它模块-->
+<!--    <import resource="applicationContext_dishCart.xml"/>-->
+</beans>
